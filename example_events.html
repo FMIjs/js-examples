@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>events example</title>
+    <script>
+        window.addEventListener('load', function () {
+            var body = document.querySelector('body'),
+                reciever = document.querySelector('input#reciever'),
+                paragraphs = document.querySelectorAll('p.static'),
+                content = document.querySelector('div#content')
+                keypress_handler = function (evt) {
+                    var character = String.fromCharCode(evt.keyCode),
+                        identifier = this.id || this.tagName.toLowerCase();
+                    console.log(identifier + ' got ' + character);
+                };
+
+            Array.prototype.forEach.call(paragraphs, function (paragraph) {
+                    paragraph.addEventListener('mouseover', function () {
+                        var digit = paragraph.innerText.match(/\d$/)[0];
+                        document.querySelector('p#res').innerText = digit;
+                });
+            });
+
+            document.querySelector('result')
+                .addEventListener('keypress', keypress_handler);
+            body.addEventListener('keypress', keypress_handler);
+            body.addEventListener('keypress', function () {
+                
+            }, true);
+        });
+    </script>
+
+    <style type="text/css">
+        .static {
+            color: #125314;
+        }
+        .left {
+            float: left;
+        }
+        .right {
+            float: right;
+        }
+        #res {
+            text-align: center;
+            width: 100%;
+            font-size: 400px;
+            margin: 0;
+        }
+        #result {
+            width: 80%;
+        }
+    </style>
+</head>
+<body>
+    <input id="reciever" type="text" name="">
+    <div id="content" class="left">
+        <p class="static">hover 1</p>
+        <p class="static">hover 2</p>
+        <p class="static">hover 3</p>
+        <p class="static">hover 4</p>
+        <p class="static">hover 5</p>
+        <p class="static">hover 6</p>
+        <p class="static">hover 7</p>
+        <p class="static">hover 8</p>
+        <p class="static">hover 9</p>
+    </div>
+
+    <div id="result" class="right">
+        <p id="res" class="left"></p>
+    </div>
+</body>
+</html>

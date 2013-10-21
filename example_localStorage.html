@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+r :
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>localStorage example</title>
+    <script>
+        window.onload = function () {
+            var important_input = document.querySelector('input#persist_me');
+            important_input.addEventListener('keyup', function () {
+                localStorage.important_value = this.value;
+            });
+
+            if (localStorage.hasOwnProperty('important_value')) {
+                important_input.value = localStorage.important_value
+            }
+        };
+    </script>
+</head>
+<body>
+    <p>Choose a very special value you would like to keep</p>
+
+    <input id="persist_me" type="text" name="" />
+</body>
+</html>

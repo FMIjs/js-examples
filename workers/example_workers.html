@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title></title>
+
+    <script>
+    window.onload = function () {
+        var worker = new Worker('worker.js'),
+            timer_text = document.querySelector('p#timer'),
+            array_text = document.querySelector('p#array'),
+            sorted_text = document.querySelector('p#sorted'),
+            length = document.querySelector('input#length'),
+            uIntArray;
+
+        Object.defineProperty(Uint8Array.prototype, 'humanReadable', {
+            get: function () {
+                return Array.prototype.slice.call(this).join(' ');
+            }
+        });
+
+        worker.addEventListener('message', function (evt) {
+            var data = evt.data;
+            switch (data.result) {
+                case 'generated':
+                    console.log('got generated list');
+                    array_text.innerText = data.payload.humanReadable;
+                    uIntArray = data.payload;
+                    break;
+                case 'sorted':
+                    console.log('got sorted list');
+                    array_text.innerText = data.payload.humanReadable;
+                    sorted_text.innerText = data.payload.humanReadable;
+                    break;
+                default:
+            }
+        });
+
+        setInterval(function () { timer_text.innerText++; }, 1000);
+
+        document.querySelector('button#generate').addEventListener('click', function() {
+            worker.postMessage({command: 'generate', length: length.value});
+        });
+
+        document.querySelector('button#sort').addEventListener('click', function () {
+            worker.postMessage({command: 'sort', data: uIntArray}, [uIntArray.buffer]);
+        });
+
+        document.querySelector('a#toggle-array-visibility').addEventListener('click', function (evt) {
+            evt.stopPropagation();
+            array_text.hidden = !array_text.hidden;
+        });
+    };
+    </script>
+</head>
+<body>
+    <input id="length" type=""/>
+    <button id="generate">Generate array</button>
+    <a id="toggle-array-visibility" href="#">show/hide array</a>
+    <p id="array" hidden></p>
+    <button id="sort">Sort Array</button>
+    <p id="sorted"></p>
+
+    <p id="timer"></p>
+</body>
+</html>
