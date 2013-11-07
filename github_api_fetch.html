@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>github API example</title>
+    <style type="text/css">
+        img {
+            width: 80px;
+            height: 80px;
+        }
+
+        div.organization_info {
+            float: left;
+            margin-right: 5px;
+        }
+
+        iframe {
+            width: 80%;
+            left: 10%;
+        }
+    </style>
+    <script src="http://code.jquery.com/jquery-1.9.0.js"></script>
+
+    <script type="text/javascript">
+        function request_organization_info(organization_name, callback) {
+            $.getJSON('https://api.github.com/orgs/' + organization_name)
+                .success(callback)
+                .error(function (data) {
+                    if (data.status === 404) {
+                        $('#error #message').text("There is no such GitHub organization: " + organization_name);
+                    }
+                }
+            );
+        }
+
+        function display_organization_info(organization_name) {
+            request_organization_info(organization_name, function(api_response) {
+                var $organization_info,
+                    $login_data,
+                    $avatar_image,
+                    $account_page;
+                    
+                $organization_info = $('#organization_info_prototype').clone();
+                $organization_info.attr('id', '');
+                $organization_info.prop('hidden', false);
+                $organization_info.addClass('organization_info');
+
+                $login_data = $organization_info.find('.login > .data');
+                $login_data.text(api_response.login);
+
+                $avatar_image = $organization_info.find('.avatar > img');
+                $avatar_image.attr('src', api_response.avatar_url);
+
+                $account_page = $organization_info.find('.account_page > a');
+                $account_page.attr('href', api_response.html_url)
+
+                $('#organizations').append($organization_info);
+            });
+        }
+
+        $(function () {
+            $('button#display_organization_info').on('click', function () {
+                display_organization_info($('input#organization').val());
+            })
+
+            $('#organizations').on('click', '.account_page > a', function(e) {
+                $('iframe#github_page').attr('src',
+                    $(this)
+                        .closest('.organization_info')
+                        .find('img')
+                        .attr('src')
+                );
+
+                //e.preventDefault();
+            })
+        });
+    </script>
+
+</head>
+
+
+<body>
+    <div>
+        <label for="organization">Organization name</label>
+        <input id="organization" type="text">
+        <button id="display_organization_info">Display organization info</button>
+    </div>
+
+    <div id="organizations">
+        <div id="organization_info_prototype" hidden>
+            <div class="avatar"><img src="" alt=""></div>
+            <div class="login">
+                <label>Login</label>
+                <span class="data"></span>
+            </div>
+            <div class="account_page"><a href="#" target="_blank">Visit on GitHub</a></div>
+        </div>
+    </div>
+
+    <div id="error">
+        <span id="message"></span>
+    </div>
+
+    <iframe id="github_page" src="" frameborder="0"></iframe>
+</body>
+</html>
