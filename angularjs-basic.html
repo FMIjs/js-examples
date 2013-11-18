@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<!--
+  Created using jsbin.com
+  Source can be edited via http://jsbin.com/eboKIvA/1/edit
+-->
+<head>
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/2.0.2/jquery.min.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.1.5/angular.min.js"></script>
+<meta charset=utf-8 />
+  <title>Angular App</title>
+
+<style id="jsbin-css">
+
+</style>
+</head>
+<body ng-app ng-controller="TaskCtrl">
+  <br /><br /><br />
+  <input type="text" ng-model="item" />
+  <button ng-click="addItem()">Add</button>
+  <input type="text" ng-model="filter" />
+  <ul>
+    <li ng-repeat="item in items | filter: filter">
+      <button ng-click="removeItem($index)">X</button>
+      {{item}}
+    </li>
+  </ul>
+<script>
+function TaskCtrl($scope) {
+  $scope.items = [];
+  $scope.addItem = function () {
+    $scope.items.push($scope.item);
+    $scope.item = undefined;
+  };
+  $scope.removeItem = function (idx) {
+    $scope.items.splice(idx, 1);
+  };
+}
+</script>
+</body>
+</html>
