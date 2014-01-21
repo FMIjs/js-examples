@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>simpel chat</title>
+
+    <style type="text/css" media="all">
+        #chat_log {
+            height: 40em;
+            max-height: 70%;
+            overflow-y: scroll;
+        }
+
+        #message {
+            width: 100%;
+        }
+    </style>
+
+    <script type="text/javascript">
+        document.onreadystatechange = function () {
+            if (document.readyState != 'complete' ) return;
+            var socket = new WebSocket('ws://localhost:8080'),
+                chat_log = document.getElementById('chat_log'),
+                message_input = document.getElementById('message');
+
+            function write_to_log(text) {
+                var new_line = document.createElement('p');
+                new_line.innerText = text;
+                chat_log.appendChild(new_line);
+                document.querySelector('#chat_log p:last-child').scrollIntoView();
+            }
+
+            socket.onopen = function () {
+                console.log('connected');
+                write_to_log('Connected to server');
+            };
+
+            socket.onerror = function (error) {
+                console.error('WebSocket error!: ' + error);
+                write_to_log('ERROR!');
+            };
+
+            socket.onmessage = function (e) {
+                write_to_log(e.data);
+            };
+
+            message_input.addEventListener('keydown', function (evt) {
+                if (evt.keyCode === 13) {
+                    var match = this.value.match(/^\/(\w+)\s+(.*)/);
+                    socket.send(this.value);
+                    if (match) {
+                        write_to_log('[COMMAND TO SERVER] ' + match[1] + ' with arguments ' + match[2]);
+                    } else {
+                        write_to_log('>> ' + this.value);
+                    }
+                    this.value = '';
+                }
+            });
+
+        };
+    </script>
+
+</head>
+<body>
+    <div id="chat_log">
+      
+    </div>
+    <div id="message-wrapper">
+        <input id="message" type="text">
+    </div>
+</body>
+</html>
